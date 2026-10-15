@@ -18,13 +18,13 @@ all: build
 build: $(PROGRAM)
 
 $(PROGRAM): $(OBJECTS)
-	$(CC) $(LDFLAGS) -o $@ $^ $(LDLIBS)
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^ $(LDLIBS)
 
 %.o: %.c
 	$(CC) $(CPPFLAGS) $(CFLAGS) -MMD -MP -c $< -o $@
 
 $(TEST_PROGRAM): $(TEST_OBJECTS)
-	$(CC) $(LDFLAGS) -o $@ $^ $(LDLIBS)
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^ $(LDLIBS)
 
 tests/%.o: tests/%.c
 	$(CC) $(CPPFLAGS) $(CFLAGS) -MMD -MP -c $< -o $@
@@ -32,7 +32,7 @@ tests/%.o: tests/%.c
 test: $(TEST_PROGRAM)
 	./$(TEST_PROGRAM)
 
-check: test
+check: build test
 
 clean:
 	rm -f $(PROGRAM) $(OBJECTS) $(TEST_PROGRAM) $(TEST_OBJECTS) \
