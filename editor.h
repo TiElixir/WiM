@@ -1,33 +1,36 @@
 #ifndef EDITOR_H
 #define EDITOR_H
-#include <termios.h>
 
+#include <stddef.h>
+
+#include "buffer.h"
+
+typedef enum {
+    MODE_NORMAL = 0,
+    MODE_INSERT = 1
+} EditorMode;
 
 typedef struct {
-    char **lines;
-    int num_lines;
-
-    int cx;
-    int cy;
-
-    int mode; //view edit, etc...
-
-    char filename[256];
-    
-    struct termios original;
-
+    Buffer buffer;
+    size_t cx;
+    size_t cy;
+    size_t row_offset;
+    size_t column_offset;
+    int screen_rows;
+    int screen_columns;
+    EditorMode mode;
+    char *filename;
+    char status[160];
 } Editor;
 
 extern Editor E;
 
-void editorInit();
-void editorOpen(const char *filename);
-void editorDisplay();
-void editorRun();
-void editorShutdown();
-
-
-void editorSave();
-
+int editorInit(void);
+int editorOpen(const char *filename);
+int editorDisplay(void);
+int editorRun(void);
+void editorShutdown(void);
+int editorGetLastFilledLine(void);
+int editorSave(void);
 
 #endif
