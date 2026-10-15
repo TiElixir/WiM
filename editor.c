@@ -483,6 +483,12 @@ static int normal_mode_key(int key)
             editorSave();
             return 0;
         case 'x':
+            if (E.cx < current_line_length()) {
+                if (buffer_delete_char(&E.buffer, E.cy, E.cx + 1) != 0) {
+                    set_status("Unable to delete character.");
+                }
+            }
+            return 0;
         case KEY_DELETE:
             delete_at_cursor();
             return 0;
