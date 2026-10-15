@@ -1,0 +1,5 @@
+/editor
+/wim
+*.o
+*.d
+/tests/test_buffer
