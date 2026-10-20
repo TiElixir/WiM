@@ -1,10 +1,18 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "editor.h"
 
 int main(int argc, char *argv[])
 {
+    if (argc == 2 && (strcmp(argv[1], "--help") == 0 ||
+                      strcmp(argv[1], "-h") == 0)) {
+        printf("Usage: %s [file]\n", argv[0]);
+        printf("Open a file in the WiM terminal editor.\n");
+        return EXIT_SUCCESS;
+    }
+
     if (editorInit() != 0) {
         fprintf(stderr, "WiM: unable to initialize the editor\n");
         return EXIT_FAILURE;

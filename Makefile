@@ -11,7 +11,7 @@ OBJECTS := $(SOURCES:.c=.o)
 TEST_PROGRAM := tests/test_buffer
 TEST_OBJECTS := tests/test_buffer.o buffer.o
 
-.PHONY: all build test check clean
+.PHONY: all build test test-cli check clean
 
 all: build
 
@@ -32,7 +32,10 @@ tests/%.o: tests/%.c
 test: $(TEST_PROGRAM)
 	./$(TEST_PROGRAM)
 
-check: build test
+test-cli: build
+	sh tests/test_cli.sh
+
+check: build test test-cli
 
 clean:
 	rm -f $(PROGRAM) $(OBJECTS) $(TEST_PROGRAM) $(TEST_OBJECTS) \
