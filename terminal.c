@@ -98,7 +98,7 @@ static int read_byte(unsigned char *character)
             return 1;
         }
         if (count == 0) {
-            return 0;
+            return KEY_EOF;
         }
         if (errno == EINTR) {
             return KEY_INTERRUPTED;
@@ -112,14 +112,14 @@ static int read_escape_sequence(void)
     unsigned char first;
     int result = read_byte(&first);
     if (result != 1) {
-        return result == 0 ? KEY_ESCAPE : result;
+        return result == KEY_EOF ? KEY_ESCAPE : result;
     }
 
     if (first == '[' || first == 'O') {
         unsigned char second;
         result = read_byte(&second);
         if (result != 1) {
-            return result == 0 ? KEY_ESCAPE : result;
+            return result == KEY_EOF ? KEY_ESCAPE : result;
         }
 
         if (first == 'O') {
@@ -154,7 +154,7 @@ static int read_escape_sequence(void)
             unsigned char terminator;
             result = read_byte(&terminator);
             if (result != 1) {
-                return result == 0 ? KEY_ESCAPE : result;
+                return result == KEY_EOF ? KEY_ESCAPE : result;
             }
             if (terminator != '~') {
                 return KEY_ESCAPE;
@@ -183,9 +183,6 @@ int terminalReadKey(void)
     for (;;) {
         unsigned char character;
         int result = read_byte(&character);
-        if (result == 0) {
-            continue;
-        }
         if (result != 1) {
             return result;
         }

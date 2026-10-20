@@ -4,6 +4,7 @@
 enum {
     KEY_ERROR = -1,
     KEY_INTERRUPTED = -2,
+    KEY_EOF = -3,
     KEY_ESCAPE = 27,
     KEY_ARROW_LEFT = 1000,
     KEY_ARROW_RIGHT,
