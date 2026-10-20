@@ -517,6 +517,11 @@ int editorRun(void)
             result = -1;
             break;
         }
+        if (key == KEY_EOF) {
+            set_status("Input closed.");
+            result = 0;
+            break;
+        }
         if (key == KEY_ERROR) {
             set_status("Unable to read terminal input.");
             result = -1;

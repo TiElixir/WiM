@@ -28,10 +28,14 @@ Open an existing file or prepare a new file for editing:
 ```sh
 ./wim path/to/file.txt
 ./wim path/to/new-file.txt
+./wim --help
 ```
 
 Running `./wim` without a filename opens an unnamed buffer. The unnamed buffer
 can be edited, but it must be opened with a filename to be saved.
+
+If standard input closes while WiM is running, the editor exits cleanly and
+restores the terminal instead of waiting forever for another key.
 
 ## Controls
 
