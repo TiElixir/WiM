@@ -4,6 +4,7 @@
 #include <signal.h>
 #include <stdbool.h>
 #include <stddef.h>
+#include <poll.h>
 #include <string.h>
 #include <sys/ioctl.h>
 #include <termios.h>
@@ -53,8 +54,11 @@ int terminalEnableRawMode(void)
     raw.c_oflag &= (tcflag_t) ~(OPOST);
     raw.c_cflag |= CS8;
     raw.c_lflag &= (tcflag_t) ~(ECHO | ICANON | IEXTEN | ISIG);
-    raw.c_cc[VMIN] = 0;
-    raw.c_cc[VTIME] = 1;
+    /* Wait for a real byte. With VMIN=0, an idle read returns 0 and is
+     * indistinguishable from EOF, which would make the editor quit while the
+     * user is simply thinking. */
+    raw.c_cc[VMIN] = 1;
+    raw.c_cc[VTIME] = 0;
 
     if (tcsetattr(STDIN_FILENO, TCSAFLUSH, &raw) == -1) {
         return -1;
@@ -107,17 +111,40 @@ static int read_byte(unsigned char *character)
     }
 }
 
+static int read_escape_byte(unsigned char *character)
+{
+    struct pollfd input = {
+        .fd = STDIN_FILENO,
+        .events = POLLIN
+    };
+
+    int poll_result;
+    do {
+        poll_result = poll(&input, 1, 100);
+    } while (poll_result == -1 && errno == EINTR);
+
+    if (poll_result == 0) {
+        return KEY_ESCAPE;
+    }
+    if (poll_result == -1) {
+        return KEY_ERROR;
+    }
+
+    int result = read_byte(character);
+    return result == KEY_EOF ? KEY_ESCAPE : result;
+}
+
 static int read_escape_sequence(void)
 {
     unsigned char first;
-    int result = read_byte(&first);
+    int result = read_escape_byte(&first);
     if (result != 1) {
         return result == KEY_EOF ? KEY_ESCAPE : result;
     }
 
     if (first == '[' || first == 'O') {
         unsigned char second;
-        result = read_byte(&second);
+        result = read_escape_byte(&second);
         if (result != 1) {
             return result == KEY_EOF ? KEY_ESCAPE : result;
         }
@@ -152,7 +179,7 @@ static int read_escape_sequence(void)
 
         if (second >= '0' && second <= '9') {
             unsigned char terminator;
-            result = read_byte(&terminator);
+            result = read_escape_byte(&terminator);
             if (result != 1) {
                 return result == KEY_EOF ? KEY_ESCAPE : result;
             }

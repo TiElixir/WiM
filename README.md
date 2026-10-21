@@ -10,6 +10,8 @@ WiM requires a C11 compiler and a POSIX terminal. Build it with:
 
 ```sh
 make
+# Equivalent explicit build target:
+make build
 ```
 
 The build enables common compiler warnings. Run the non-interactive regression
