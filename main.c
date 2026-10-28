@@ -10,6 +10,19 @@ int main(int argc, char *argv[])
                       strcmp(argv[1], "-h") == 0)) {
         printf("Usage: %s [file]\n", argv[0]);
         printf("Open a file in the WiM terminal editor.\n");
+
+        return EXIT_SUCCESS;
+    }
+    if (argc == 2 && (strcmp(argv[1], "--keys") == 0)) {
+        printf("Keybinds:\n");
+        printf("i           |   Enter insert mode\n");
+        printf("q           |   Quit Editor\n");
+        printf("x           |   Delete chat at cursor\n");
+        printf("h           |   Cursor Left\n");
+        printf("j           |   Cursor Down\n");
+        printf("k           |   Cursor Up\n");
+        printf("l           |   Cursor Right\n");
+        printf("n or Ctrl+S |   Write\n\n");
         return EXIT_SUCCESS;
     }
 
